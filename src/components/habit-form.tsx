@@ -48,8 +48,8 @@ export function HabitForm({ habit, onClose }: HabitFormProps) {
         toast.success("Habit created");
       }
       onClose();
-    } catch (error: any) {
-      toast.error(error.message || "Something went wrong");
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "Something went wrong");
     }
   };
 

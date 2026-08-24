@@ -8,28 +8,43 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = createClient();
+  let userId = "";
+  let tasks: Task[] = [];
+  let habits: Habit[] = [];
+  let notes: Note[] = [];
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    const supabase = createClient();
 
-  // Fetch data for AI context
-  const { data: tasks } = await supabase
-    .from("tasks")
-    .select("*")
-    .eq("user_id", user?.id || "");
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  const { data: habits } = await supabase
-    .from("habits")
-    .select("*")
-    .eq("user_id", user?.id || "");
+    userId = user?.id || "";
 
-  const { data: notes } = await supabase
-    .from("notes")
-    .select("*")
-    .eq("user_id", user?.id || "")
-    .limit(10);
+    const { data: tasksData } = await supabase
+      .from("tasks")
+      .select("*")
+      .eq("user_id", userId);
+
+    const { data: habitsData } = await supabase
+      .from("habits")
+      .select("*")
+      .eq("user_id", userId);
+
+    const { data: notesData } = await supabase
+      .from("notes")
+      .select("*")
+      .eq("user_id", userId)
+      .limit(10);
+
+    tasks = (tasksData || []) as Task[];
+    habits = (habitsData || []) as Habit[];
+    notes = (notesData || []) as Note[];
+  } catch {
+    // Supabase unavailable (e.g. during static export without credentials).
+    // Render the shell with empty context so the build and app don't crash.
+  }
 
   return (
     <div className="min-h-screen">
@@ -37,12 +52,8 @@ export default async function DashboardLayout({
       <main className="pl-16 lg:pl-64 min-h-screen">
         <div className="max-w-5xl mx-auto p-4 lg:p-8">
           <GlobalShortcutsProvider
-            userId={user?.id || ""}
-            context={{
-              tasks: (tasks || []) as Task[],
-              habits: (habits || []) as Habit[],
-              notes: (notes || []) as Note[],
-            }}
+            userId={userId}
+            context={{ tasks, habits, notes }}
           >
             {children}
           </GlobalShortcutsProvider>

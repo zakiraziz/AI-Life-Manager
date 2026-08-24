@@ -53,6 +53,12 @@ export interface UserProfile {
   created_at: string;
 }
 
+export interface AICommandContext {
+  tasks: Task[];
+  habits: Habit[];
+  notes: Note[];
+}
+
 export interface AICommandResult {
   type: "task" | "habit" | "note";
   title: string;

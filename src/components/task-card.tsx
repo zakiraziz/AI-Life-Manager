@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { Calendar, Clock, CheckCircle2, Circle, Trash2, Edit2, GripVertical } from "lucide-react";
-import { Task, Priority, TaskStatus } from "@/lib/types";
+import { Task, Priority } from "@/lib/types";
 import { PriorityBadge } from "@/components/ui/priority-badge";
 import { cn } from "@/lib/utils";
 import { Confetti } from "@/components/confetti";

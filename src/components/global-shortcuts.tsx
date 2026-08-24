@@ -4,13 +4,14 @@ import { useState } from "react";
 import { AICommandBar } from "@/components/ai-command-bar";
 import { CommandBarProvider } from "@/components/command-bar-provider";
 import { useGlobalShortcuts } from "@/hooks/use-keyboard";
+import { AICommandContext } from "@/lib/types";
 
 // Re-export so pages can use useCommandBar to open it
 export { useCommandBar } from "@/components/command-bar-provider";
 
 interface GlobalShortcutsProps {
   userId: string;
-  context?: { tasks: any[]; habits: any[]; notes: any[] };
+  context?: AICommandContext;
   children: React.ReactNode;
 }
 

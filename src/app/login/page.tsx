@@ -92,7 +92,7 @@ export default function LoginPage() {
               </div>
               <h2 className="text-xl font-semibold mb-2">Check your email</h2>
               <p className="text-muted-foreground text-sm mb-6">
-                We've sent a magic link to <strong>{email}</strong>
+                We&apos;ve sent a magic link to <strong>{email}</strong>
               </p>
               <button
                 onClick={() => setMagicLinkSent(false)}
@@ -177,7 +177,7 @@ export default function LoginPage() {
               </button>
 
               <p className="text-center text-sm text-muted-foreground mt-6">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <Link
                   href="/signup"
                   className="text-primary hover:underline font-medium"

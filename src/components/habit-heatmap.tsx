@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { format, subDays, eachDayOfInterval } from "date-fns";
 import { motion } from "framer-motion";
 import { Flame, CheckCircle2 } from "lucide-react";
-import { Habit } from "@/lib/types";
+import { Habit, HabitLog } from "@/lib/types";
 import { useHabitLogs, useToggleHabitLog } from "@/hooks/use-habits";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -46,7 +45,7 @@ export function HabitHeatmap({ habit, userId }: HabitHeatmapProps) {
           user_id: userId,
           logged_date: dateStr,
           created_at: new Date().toISOString(),
-        } as any,
+        } as HabitLog,
       ]);
     }
 
@@ -57,8 +56,6 @@ export function HabitHeatmap({ habit, userId }: HabitHeatmapProps) {
     if (!logs || logs.length === 0) return 0;
 
     let streak = 0;
-    const todayStr = today.toISOString().split("T")[0];
-    const hasToday = loggedDates.has(todayStr);
 
     // Count consecutive days backwards from today
     for (let i = 0; i < 7; i++) {

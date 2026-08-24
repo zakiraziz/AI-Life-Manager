@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
 import { Placeholder } from "@tiptap/extension-placeholder";
@@ -19,10 +19,9 @@ import {
   Undo,
   Redo,
 } from "lucide-react";
-import { useUpdateNote, useCreateNote } from "@/hooks/use-notes";
+import { useUpdateNote } from "@/hooks/use-notes";
 import { Note } from "@/lib/types";
 import toast from "react-hot-toast";
-import { useQueryClient } from "@tanstack/react-query";
 
 interface TiptapEditorProps {
   note: Note;
@@ -33,7 +32,6 @@ export function TiptapEditor({ note }: TiptapEditorProps) {
   const [content, setContent] = useState(note.content);
   const [hasChanges, setHasChanges] = useState(false);
   const autoSaveTimer = useRef<NodeJS.Timeout | null>(null);
-  const queryClient = useQueryClient();
   const updateNote = useUpdateNote();
 
   const editor = useEditor({
@@ -68,8 +66,8 @@ export function TiptapEditor({ note }: TiptapEditorProps) {
         });
         setHasChanges(false);
         toast.success("Note saved", { duration: 1500, icon: "💾" });
-      } catch (error: any) {
-        toast.error(error.message || "Failed to save note");
+      } catch (error: unknown) {
+        toast.error(error instanceof Error ? error.message : "Failed to save note");
       }
     },
     [note.id, title, updateNote]
@@ -92,16 +90,6 @@ export function TiptapEditor({ note }: TiptapEditorProps) {
   const saveNow = () => {
     const newContent = editor?.getHTML() || content;
     saveNote(newContent);
-  };
-
-  const toggleHeading = (level: 1 | 2 | 3) => {
-    if (!editor) return;
-    const node = editor.state.selection.$nodeBefore;
-    if (node?.type === `heading`) {
-      editor.chain().focus().clearMarks().run();
-    } else {
-      editor.chain().focus().toggleHeading({ level }).run();
-    }
   };
 
   const charLimit = 10000;

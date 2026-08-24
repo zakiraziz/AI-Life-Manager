@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Plus, StickyNote, Trash2, Search, X } from "lucide-react";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Plus, StickyNote, Trash2 } from "lucide-react";
 import { Header } from "@/components/header";
 import { TiptapEditor } from "@/components/tiptap-editor";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -31,8 +31,8 @@ export default function NotesPage() {
       const note = await createNote.mutateAsync({});
       setSelectedNote(note);
       toast.success("Note created");
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "Something went wrong");
     }
   };
 
@@ -42,8 +42,8 @@ export default function NotesPage() {
         await deleteNote.mutateAsync(note.id);
         if (selectedNote?.id === note.id) setSelectedNote(null);
         toast.success("Note deleted");
-      } catch (error: any) {
-        toast.error(error.message);
+      } catch (error: unknown) {
+        toast.error(error instanceof Error ? error.message : "Something went wrong");
       }
     }
   };

@@ -18,7 +18,7 @@ import { useParseAICommand, useWeeklyReflection } from "@/hooks/use-ai";
 import { useCreateTask } from "@/hooks/use-tasks";
 import { useCreateHabit } from "@/hooks/use-habits";
 import { useCreateNote } from "@/hooks/use-notes";
-import { AICommandResult, WeeklyReflection } from "@/lib/types";
+import { AICommandResult } from "@/lib/types";
 import toast from "react-hot-toast";
 
 export default function AssistantPage() {
@@ -44,8 +44,8 @@ export default function AssistantPage() {
     try {
       const parsed = await parseCommand.mutateAsync({ command });
       setResult(parsed as AICommandResult);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to parse command");
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "Failed to parse command");
     }
   };
 
@@ -75,8 +75,8 @@ export default function AssistantPage() {
       toast.success(`${result.type} created!`, { icon: "✨" });
       setResult(null);
       setCommand("");
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "Something went wrong");
     }
   };
 
@@ -114,7 +114,7 @@ export default function AssistantPage() {
           <h2 className="text-lg font-semibold">Create with AI</h2>
         </div>
         <p className="text-sm text-muted-foreground mb-4">
-          Describe what you want to create in natural language. I'll parse it
+          Describe what you want to create in natural language. I&apos;ll parse it
           into a task, habit, or note.
         </p>
         <div className="flex gap-2">

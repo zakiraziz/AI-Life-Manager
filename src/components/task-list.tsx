@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   DndContext,
   closestCenter,
@@ -20,8 +20,8 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { motion } from "framer-motion";
-import { Plus, ListTodo, Filter } from "lucide-react";
-import { Task, TaskStatus } from "@/lib/types";
+import { Plus, ListTodo } from "lucide-react";
+import { Task } from "@/lib/types";
 import { TaskCard } from "@/components/task-card";
 import { TaskForm } from "@/components/task-form";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -67,7 +67,7 @@ export function TaskList() {
   const reorderTasks = useReorderTasks();
   const deleteTask = useDeleteTask();
   const queryClient = useQueryClient();
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const setActiveId = useState<string | null>(null)[1];
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [filter, setFilter] = useState<"all" | "todo" | "in_progress" | "done">("all");
@@ -133,12 +133,6 @@ export function TaskList() {
       onSuccess: () => {
         toast.success(`Deleted "${task.title}"`, {
           icon: "🗑️",
-          action: {
-            label: "Undo",
-            onClick: () => {
-              toast("Task was deleted", { icon: "✅" });
-            },
-          },
         });
       },
       onError: () => {

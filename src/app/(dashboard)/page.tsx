@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { TaskList } from "@/components/task-list";
 import { Task, Habit, Note } from "@/lib/types";
+import { User } from "@supabase/supabase-js";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
 import {
@@ -13,54 +14,66 @@ import {
 import Link from "next/link";
 
 export default async function TodayPage() {
-  const supabase = createClient();
+  let tasks: Task[] = [];
+  let habits: Habit[] = [];
+  let notes: Note[] = [];
+  let user: User | null = null;
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    const supabase = createClient();
+
+    const {
+      data: { user: u },
+    } = await supabase.auth.getUser();
+    user = u;
+
+    if (user) {
+      // Fetch today's tasks, all habits, recent notes
+      const { data: tasksData } = await supabase
+        .from("tasks")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("position", { ascending: true });
+
+      const { data: habitsData } = await supabase
+        .from("habits")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+
+      const { data: notesData } = await supabase
+        .from("notes")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("updated_at", { ascending: false })
+        .limit(3);
+
+      tasks = (tasksData || []) as Task[];
+      habits = (habitsData || []) as Habit[];
+      notes = (notesData || []) as Note[];
+    }
+  } catch {
+    // Supabase unavailable (e.g. during static export without credentials).
+  }
 
   if (!user) {
     return null;
   }
 
-  // Fetch today's tasks, all habits, recent notes
-  const { data: tasks } = await supabase
-    .from("tasks")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("position", { ascending: true });
-
-  const { data: habits } = await supabase
-    .from("habits")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false });
-
-  const { data: notes } = await supabase
-    .from("notes")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("updated_at", { ascending: false })
-    .limit(3);
-
-  const typedTasks = (tasks || []) as Task[];
-  const typedHabits = (habits || []) as Habit[];
-  const typedNotes = (notes || []) as Note[];
-
-  const todayTasks = typedTasks.filter(
+  const todayTasks = tasks.filter(
     (t) =>
       t.due_date &&
       new Date(t.due_date).toDateString() === new Date().toDateString()
   );
 
-  const completedToday = typedTasks.filter(
+  const completedToday = tasks.filter(
     (t) =>
       t.status === "done" &&
       t.completed_at &&
       new Date(t.completed_at).toDateString() === new Date().toDateString()
   ).length;
 
-  const totalTasks = typedTasks.length;
+  const totalTasks = tasks.length;
 
   const today = new Date();
   const greeting =
@@ -125,7 +138,7 @@ export default async function TodayPage() {
               <Flame className="w-5 h-5 text-orange-500" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{typedHabits.length}</p>
+              <p className="text-2xl font-bold">{habits.length}</p>
               <p className="text-xs text-muted-foreground">Active habits</p>
             </div>
           </div>
@@ -142,7 +155,7 @@ export default async function TodayPage() {
               <StickyNote className="w-5 h-5 text-purple-500" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{typedNotes.length}</p>
+              <p className="text-2xl font-bold">{notes.length}</p>
               <p className="text-xs text-muted-foreground">Recent notes</p>
             </div>
           </div>
@@ -219,7 +232,7 @@ export default async function TodayPage() {
       >
         <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
           <CalendarDays className="w-5 h-5 text-primary" />
-          Today's Tasks
+          Today&apos;s Tasks
         </h2>
         <TaskList />
       </motion.div>

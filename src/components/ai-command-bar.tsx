@@ -7,19 +7,19 @@ import { useParseAICommand } from "@/hooks/use-ai";
 import { useCreateTask } from "@/hooks/use-tasks";
 import { useCreateHabit } from "@/hooks/use-habits";
 import { useCreateNote } from "@/hooks/use-notes";
-import { AICommandResult } from "@/lib/types";
+import { AICommandResult, AICommandContext } from "@/lib/types";
 import toast from "react-hot-toast";
 
 interface AICommandBarProps {
   open: boolean;
   onClose: () => void;
   userId: string;
-  context?: { tasks: any[]; habits: any[]; notes: any[] };
+  context?: AICommandContext;
 }
 
 type ParsedResult = AICommandResult | { type: "multi"; items: AICommandResult[] };
 
-export function AICommandBar({ open, onClose, userId, context }: AICommandBarProps) {
+export function AICommandBar({ open, onClose, context }: AICommandBarProps) {
   const [command, setCommand] = useState("");
   const [parsedResult, setParsedResult] = useState<ParsedResult | null>(null);
   const [showPreview, setShowPreview] = useState(false);
@@ -44,8 +44,8 @@ export function AICommandBar({ open, onClose, userId, context }: AICommandBarPro
       });
       setParsedResult(result);
       setShowPreview(true);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to parse command");
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "Failed to parse command");
     }
   };
 
@@ -81,8 +81,8 @@ export function AICommandBar({ open, onClose, userId, context }: AICommandBarPro
           });
         }
         saved++;
-      } catch (error: any) {
-        toast.error(`Failed to save ${item.type}: ${error.message}`);
+      } catch (error: unknown) {
+        toast.error(`Failed to save ${item.type}: ${error instanceof Error ? error.message : "unknown error"}`);
       }
     }
 

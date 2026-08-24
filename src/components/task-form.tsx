@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { X, Calendar as CalendarIcon } from "lucide-react";
 import { Task, Priority, TaskStatus } from "@/lib/types";
@@ -39,19 +39,7 @@ export function TaskForm({ task, onClose }: TaskFormProps) {
     titleRef.current?.focus();
   }, []);
 
-  // Listen for Ctrl+Enter to submit
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
-        e.preventDefault();
-        handleSubmit();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [title, description, priority, dueDate, status]);
-
-  const handleSubmit = async (e?: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!title.trim()) {
       toast.error("Title is required");
@@ -74,10 +62,22 @@ export function TaskForm({ task, onClose }: TaskFormProps) {
       }
       toast.success(task ? "Task updated" : "Task created");
       onClose();
-    } catch (error: any) {
-      toast.error(error.message || "Something went wrong");
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "Something went wrong");
     }
-  };
+  }, [task, title, description, priority, dueDate, status, createTask, updateTask, onClose]);
+
+  // Listen for Ctrl+Enter to submit
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+        e.preventDefault();
+        handleSubmit();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleSubmit]);
 
   return (
     <motion.div

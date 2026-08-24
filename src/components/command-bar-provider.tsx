@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, ReactNode } from "react";
 import { AICommandBar } from "@/components/ai-command-bar";
+import { AICommandContext } from "@/lib/types";
 
 interface CommandBarContextType {
   open: boolean;
@@ -18,7 +19,7 @@ export function CommandBarProvider({
 }: {
   children: ReactNode;
   userId: string;
-  context?: { tasks: any[]; habits: any[]; notes: any[] };
+  context?: AICommandContext;
 }) {
   const [open, setOpen] = useState(false);
 
