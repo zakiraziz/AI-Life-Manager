@@ -1,0 +1,18 @@
+
+> z4-app@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 3.9s
+ ✓ Compiled /src/middleware in 473ms (173 modules)
+ ○ Compiling /signup ...
+ ✓ Compiled /signup in 6.3s (1650 modules)
+ GET /signup 200 in 7044ms
+ ✓ Compiled in 1456ms (799 modules)
+ ○ Compiling /login ...
+ ✓ Compiled /login in 1328ms (1644 modules)
+ GET /login 200 in 1584ms
