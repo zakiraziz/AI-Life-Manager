@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { TaskList } from "@/components/task-list";
+import { GettingStarted } from "@/components/getting-started";
 import { Task, Habit, Note } from "@/lib/types";
 import { User } from "@supabase/supabase-js";
 import { format } from "date-fns";
