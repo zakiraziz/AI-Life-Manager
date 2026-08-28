@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, CalendarDays, CheckCircle2 } from "lucide-react";
 import { Header } from "@/components/header";
 import { useCommandBar } from "@/components/command-bar-provider";
 import { useTasks } from "@/hooks/use-tasks";
 import { useHabits } from "@/hooks/use-habits";
 import { cn } from "@/lib/utils";
-import { format, startOfMonth, endOfMonth, startOfWeek, addDays, addMonths, subMonths, isSameMonth, isSameDay, isToday } from "date-fns";
+import { format, startOfMonth, startOfWeek, addDays, addMonths, subMonths, isSameMonth, isSameDay, isToday } from "date-fns";
 
 export default function CalendarPage() {
   const { openCommandBar } = useCommandBar();
@@ -21,7 +20,6 @@ export default function CalendarPage() {
   // Build the calendar grid
   const cells = useMemo(() => {
     const monthStart = startOfMonth(currentMonth);
-    const monthEnd = endOfMonth(currentMonth);
     const gridStart = startOfWeek(monthStart);
     const totalDays = 42; // 6 weeks
     return Array.from({ length: totalDays }, (_, i) => addDays(gridStart, i));
@@ -210,7 +208,7 @@ return (
           <div className="rounded-2xl border border-border p-4">
             <h4 className="font-semibold mb-2">Habits this month</h4>
             <p className="text-sm text-muted-foreground">
-              You're tracking <span className="text-foreground font-medium">{habits.length}</span>{" "}
+              You&apos;re tracking <span className="text-foreground font-medium">{habits.length}</span>{" "}
               {habits.length === 1 ? "habit" : "habits"}. Check the{" "}
               <a href="/habits" className="text-primary hover:underline">
                 Habits

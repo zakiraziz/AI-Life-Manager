@@ -53,7 +53,7 @@ export function GettingStarted({ taskCount, habitCount, noteCount }: GettingStar
         <div className="flex-1">
           <h2 className="font-semibold">Get started with Z4</h2>
           <p className="text-sm text-muted-foreground">
-            {doneCount} of {steps.length} done — you're on your way!
+            {doneCount} of {steps.length} done &mdash; you&apos;re on your way!
           </p>
         </div>
         <div className="text-right">

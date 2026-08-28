@@ -69,6 +69,7 @@ export const NAV_COMMANDS: PalletActionLink[] = [
   { id: "habits", label: "Go to Habits", hint: "Build streaks", href: "/habits", keywords: ["habit", "streak", "routine"] },
   { id: "notes", label: "Go to Notes", hint: "Write & organize", href: "/notes", keywords: ["note", "write", "editor"] },
   { id: "assistant", label: "Open AI Assistant", hint: "Natural language", href: "/assistant", keywords: ["ai", "assistant", "intelligent", "gpt"] },
+  { id: "calendar", label: "Open Calendar", hint: "Monthly task view", href: "/calendar", keywords: ["calendar", "month", "schedule"] },
   { id: "search", label: "Search everything", hint: "Tasks, notes, habits", href: "/search", keywords: ["search", "find", "filter"] },
   { id: "settings", label: "Open Settings", hint: "Notifications, export/import", href: "/settings", keywords: ["settings", "config", "preferences"] },
 ];

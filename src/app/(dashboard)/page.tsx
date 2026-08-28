@@ -107,6 +107,13 @@ export default async function TodayPage() {
         </p>
       </motion.div>
 
+      {/* Getting Started onboarding checklist */}
+      <GettingStarted
+        taskCount={tasks.length}
+        habitCount={habits.length}
+        noteCount={notes.length}
+      />
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <motion.div
@@ -221,6 +228,16 @@ export default async function TodayPage() {
           >
             <StickyNote className="w-4 h-4" />
             New Note
+          </motion.button>
+        </Link>
+        <Link href="/calendar">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary text-secondary-foreground"
+          >
+            <CalendarDays className="w-4 h-4" />
+            Calendar
           </motion.button>
         </Link>
       </motion.div>
