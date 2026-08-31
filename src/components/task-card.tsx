@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { Calendar, Clock, CheckCircle2, Circle, Trash2, Edit2, GripVertical } from "lucide-react";
 import { Task, Priority } from "@/lib/types";
+import { isPastDue } from "@/lib/utils";
 import { PriorityBadge } from "@/components/ui/priority-badge";
 import { cn } from "@/lib/utils";
 import { Confetti } from "@/components/confetti";
@@ -66,13 +67,17 @@ export function TaskCard({ task, onEdit, onDelete, isDragging }: TaskCardProps) 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, x: -100 }}
-        transition={{ duration: 0.2 }}
+                transition={{ duration: 0.2 }}
         className={cn(
           "group relative bg-card rounded-xl border border-border p-4 cursor-pointer transition-all",
           "hover:shadow-md hover:border-border",
           isDragging && "opacity-50 scale-95",
           priorityBorder[task.priority],
-          "border-l-4"
+          "border-l-4",
+          task.status !== "done" &&
+            task.due_date &&
+            isPastDue(task.due_date) &&
+            "ring-2 ring-destructive/30",
         )}
         onClick={() => {}}
       >
@@ -132,17 +137,24 @@ export function TaskCard({ task, onEdit, onDelete, isDragging }: TaskCardProps) 
 
             {/* Meta info */}
             <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-              {task.due_date && (
+                        {task.due_date && (
                 <div className="flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
                   <span
                     className={cn(
-                      format(new Date(task.due_date), "MMM d") ===
-                        format(new Date(), "MMM d") &&
-                        "text-primary font-medium"
+                      "inline-flex items-center gap-1",
+                      task.status === "done"
+                        ? "line-through opacity-60"
+                        : isPastDue(task.due_date)
+                        ? "text-destructive font-medium"
+                        : format(new Date(task.due_date), "MMM d") ===
+                            format(new Date(), "MMM d") && "text-primary font-medium",
                     )}
                   >
                     {format(new Date(task.due_date), "MMM d")}
+                    {task.status !== "done" && isPastDue(task.due_date) && (
+                      <span className="text-red-500">⚠️</span>
+                    )}
                   </span>
                 </div>
               )}

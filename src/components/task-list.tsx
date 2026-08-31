@@ -26,8 +26,8 @@ import { TaskCard } from "@/components/task-card";
 import { TaskForm } from "@/components/task-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
-import { useTasks, useReorderTasks, useDeleteTask } from "@/hooks/use-tasks";
-import toast from "react-hot-toast";
+import { useTasks, useReorderTasks, useDeleteTask, useCreateTask } from "@/hooks/use-tasks";
+import { notifyUndo } from "@/lib/undo-toast";
 import { useQueryClient } from "@tanstack/react-query";
 
 function SortableTask({ task, onEdit, onDelete }: {
@@ -63,9 +63,10 @@ function SortableTask({ task, onEdit, onDelete }: {
 }
 
 export function TaskList() {
-  const { data: tasks, isLoading, error } = useTasks();
+    const { data: tasks, isLoading, error } = useTasks();
   const reorderTasks = useReorderTasks();
   const deleteTask = useDeleteTask();
+  const createTask = useCreateTask();
   const queryClient = useQueryClient();
   const setActiveId = useState<string | null>(null)[1];
   const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -123,20 +124,38 @@ export function TaskList() {
     setActiveId(null);
   };
 
-  const handleDelete = (task: Task) => {
+    const handleDelete = (task: Task) => {
+    // Snapshot before optimistically removing
+    const snapshot = tasks || [];
+
     // Optimistic delete
     queryClient.setQueryData(["tasks"], (old: Task[] | undefined) =>
       old ? old.filter((t) => t.id !== task.id) : old
     );
 
     deleteTask.mutate(task.id, {
-      onSuccess: () => {
-        toast.success(`Deleted "${task.title}"`, {
-          icon: "🗑️",
-        });
-      },
       onError: () => {
-        queryClient.invalidateQueries({ queryKey: ["tasks"] });
+        // Rollback on error
+        queryClient.setQueryData(["tasks"], snapshot);
+      },
+    });
+
+    notifyUndo({
+      message: `Deleted "${task.title}"`,
+      onUndo: async () => {
+        // Re-create the task with its original fields
+        await createTask.mutateAsync({
+          title: task.title,
+          description: task.description || undefined,
+          priority: task.priority,
+          due_date: task.due_date || null,
+          status: task.status,
+        });
+        // Restore position so it lands back in the same spot
+        queryClient.setQueryData(["tasks"], (old: Task[] | undefined) => {
+          if (!old) return old;
+          return [...old, { ...task }].sort((a, b) => a.position - b.position);
+        });
       },
     });
   };

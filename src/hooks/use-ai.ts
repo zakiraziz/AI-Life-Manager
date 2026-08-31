@@ -35,13 +35,17 @@ export function useParseAICommand() {
 export function useWeeklyReflection() {
   return useQuery({
     queryKey: ["weekly-reflection"],
-    queryFn: async () => {
+        queryFn: async () => {
       const response = await fetch("/api/ai/reflection", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({}),
+        body: JSON.stringify({
+          tasks: [],
+          habits: [],
+          notes: [],
+        }),
       });
 
       if (!response.ok) {
