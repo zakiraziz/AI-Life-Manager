@@ -2,9 +2,8 @@ import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-  // Add React component stack traces (for error boundaries)
-  // when available in the browser
-  componentStack: true,
+  // React component stack traces for error boundaries are captured
+  // automatically via Sentry's React integration.
   // Adjust this value in production, or use a separate environment level
   tracesSampleRate: 1.0,
   // Hide schema warnings from the browser console

@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ message: "Import complete", counts });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to import data" },
       { status: 500 }

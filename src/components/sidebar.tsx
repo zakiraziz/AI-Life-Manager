@@ -11,6 +11,8 @@ import {
   Sparkles,
   LogOut,
   Moon,
+  Search,
+  Settings,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
@@ -23,6 +25,8 @@ const navItems = [
   { href: "/habits", label: "Habits", icon: Flame },
   { href: "/notes", label: "Notes", icon: StickyNote },
   { href: "/assistant", label: "AI Assistant", icon: Sparkles },
+  { href: "/search", label: "Search", icon: Search },
+  { href: "/settings", label: "Settings", icon: Settings },
 ];
 
 export function Sidebar() {

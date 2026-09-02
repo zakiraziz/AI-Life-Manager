@@ -41,9 +41,15 @@ export const SHORTCUTS: Shortcut[] = [
     category: "Tasks",
   },
   {
-    keys: "1 / 2 / 3",
+    keys: "1 / 2 / 3 / 4",
     label: "Jump to page",
-    description: "Tasks / Habits / Notes",
+    description: "Tasks / Habits / Notes / Settings",
+    category: "Navigation",
+  },
+  {
+    keys: "Ctrl+Shift+F",
+    label: "Search everything",
+    description: "Search across tasks, habits, and notes",
     category: "Navigation",
   },
 ];
@@ -64,6 +70,7 @@ export const NAV_COMMANDS: PalletActionLink[] = [
   { id: "notes", label: "Go to Notes", hint: "Write & organize", href: "/notes", keywords: ["note", "write", "editor"] },
   { id: "assistant", label: "Open AI Assistant", hint: "Natural language", href: "/assistant", keywords: ["ai", "assistant", "intelligent", "gpt"] },
   { id: "search", label: "Search everything", hint: "Tasks, notes, habits", href: "/search", keywords: ["search", "find", "filter"] },
+  { id: "settings", label: "Open Settings", hint: "Notifications, export/import", href: "/settings", keywords: ["settings", "config", "preferences"] },
 ];
 
 export const QUICK_ACTIONS = [

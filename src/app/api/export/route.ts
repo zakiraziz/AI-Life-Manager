@@ -42,7 +42,7 @@ export async function GET() {
         "Content-Disposition": `attachment; filename="z4-export-${new Date().toISOString().split("T")[0]}.json"`,
       },
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to export data" },
       { status: 500 }

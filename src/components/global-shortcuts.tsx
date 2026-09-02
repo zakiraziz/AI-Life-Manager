@@ -7,6 +7,7 @@ import { CommandBarProvider } from "@/components/command-bar-provider";
 import { CommandPalette } from "@/components/command-palette";
 import { ShortcutsGuide } from "@/components/shortcuts-guide";
 import { useGlobalShortcuts } from "@/hooks/use-keyboard";
+import { useOverdueNotifications } from "@/hooks/use-notifications";
 import { AICommandContext } from "@/lib/types";
 
 // Re-export so pages can use useCommandBar to open it
@@ -28,11 +29,15 @@ export function GlobalShortcutsProvider({ userId, context, children }: GlobalSho
   const router = useRouter();
   const [aiOpen, setAiOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
-  const [guideOpen, setGuideOpen] = useState(false);
+    const [guideOpen, setGuideOpen] = useState(false);
+
+  // Browser notifications for overdue tasks — fires automatically on mount
+  useOverdueNotifications(userId);
 
   // Ctrl+K opens the AI command bar
   useGlobalShortcuts({
     onOpenAI: () => setAiOpen(true),
+    onOpenSearch: () => router.push("/search"),
   });
 
   // Extended shortcuts: Ctrl+Shift+P (palette), '?' (guide), 1/2/3 (jump)
@@ -49,10 +54,11 @@ export function GlobalShortcutsProvider({ userId, context, children }: GlobalSho
         setGuideOpen((v) => !v);
         return;
       }
-      if (!isTypingTarget(e.target)) {
+        if (!isTypingTarget(e.target)) {
         if (e.key === "1") router.push("/tasks");
         else if (e.key === "2") router.push("/habits");
         else if (e.key === "3") router.push("/notes");
+        else if (e.key === "4") router.push("/settings");
       }
     };
     window.addEventListener("keydown", handler);

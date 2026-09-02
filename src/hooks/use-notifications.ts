@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Task } from "@/lib/types";
 import { isPastDue } from "@/lib/utils";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
@@ -38,7 +37,7 @@ export function useNotificationPermission() {
       setPermission("unsupported");
       return;
     }
-    setPermission(Notification.permission as any);
+    setPermission(Notification.permission as NotificationPermission);
   }, []);
 
   const requestPermission = useCallback(async () => {
@@ -47,7 +46,7 @@ export function useNotificationPermission() {
       return "unsupported" as NotificationPermissionStatus;
     }
     const result = await Notification.requestPermission();
-    setPermission(result as any);
+    setPermission(result as NotificationPermission);
     if (result === "granted") {
       toast.success("Notifications enabled! 🔔", { duration: 2000 });
     } else if (result === "denied") {
@@ -91,7 +90,7 @@ export function useNotificationSettings() {
  * Should be called on app load (client-side only).
  */
 export function useOverdueNotifications(userId: string) {
-  const [permission, requestPermission] = useNotificationPermission();
+  const { permission, requestPermission } = useNotificationPermission();
   const { settings } = useNotificationSettings();
   const [notifiedIds, setNotifiedIds] = useState<Set<string>>(new Set());
 
@@ -132,7 +131,7 @@ export function useOverdueNotifications(userId: string) {
     return () => {
       cancelled = true;
     };
-  }, [userId, permission, settings, notifiedIds, requestPermission]);
+  }, [userId, permission, settings, notifiedIds]);
 
   return { permission, requestPermission, settings };
 }
