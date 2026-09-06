@@ -29,7 +29,7 @@ export function GlobalShortcutsProvider({ userId, context, children }: GlobalSho
   const router = useRouter();
   const [aiOpen, setAiOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
-    const [guideOpen, setGuideOpen] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
 
   // Browser notifications for overdue tasks — fires automatically on mount
   useOverdueNotifications(userId);
@@ -54,7 +54,7 @@ export function GlobalShortcutsProvider({ userId, context, children }: GlobalSho
         setGuideOpen((v) => !v);
         return;
       }
-        if (!isTypingTarget(e.target)) {
+      if (!isTypingTarget(e.target)) {
         if (e.key === "1") router.push("/tasks");
         else if (e.key === "2") router.push("/habits");
         else if (e.key === "3") router.push("/notes");
