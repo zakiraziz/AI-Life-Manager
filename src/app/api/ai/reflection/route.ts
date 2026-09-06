@@ -19,6 +19,10 @@ export async function POST(request: Request) {
       data: { user },
     } = await supabase.auth.getUser();
 
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     let dbTasks: typeof tasks = tasks;
     let dbHabits: typeof habits = habits;
     let dbNotes: typeof notes = notes;
