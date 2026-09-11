@@ -4,9 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Mail, Lock, ArrowRight, Sparkles, Loader2 } from "lucide-react";
+import { Mail, Lock, ArrowRight, Sparkles, Loader2, AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { createClient } from "@/lib/supabase/client";
+import { getAuthErrorMessage } from "@/lib/auth-errors";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,10 +15,12 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     const supabase = createClient();
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -26,7 +29,7 @@ export default function LoginPage() {
     setLoading(false);
 
     if (error) {
-      toast.error(error.message);
+      setError(getAuthErrorMessage(error));
       return;
     }
 
@@ -38,6 +41,7 @@ export default function LoginPage() {
   const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     const supabase = createClient();
     const { error } = await supabase.auth.signInWithOtp({
       email,
@@ -48,7 +52,7 @@ export default function LoginPage() {
     setLoading(false);
 
     if (error) {
-      toast.error(error.message);
+      setError(getAuthErrorMessage(error));
       return;
     }
 
@@ -80,6 +84,18 @@ export default function LoginPage() {
               <p className="text-sm text-muted-foreground">AI Life Manager</p>
             </div>
           </div>
+
+          {error && !magicLinkSent && (
+            <motion.div
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-4 flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
+              role="alert"
+            >
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+              <span>{error}</span>
+            </motion.div>
+          )}
 
           {magicLinkSent ? (
             <motion.div

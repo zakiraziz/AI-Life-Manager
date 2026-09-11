@@ -4,9 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Mail, Lock, User, ArrowRight, Sparkles, Loader2 } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, Sparkles, Loader2, AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { createClient } from "@/lib/supabase/client";
+import { getAuthErrorMessage } from "@/lib/auth-errors";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -14,10 +15,12 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     const supabase = createClient();
     const { error } = await supabase.auth.signUp({
       email,
@@ -31,7 +34,7 @@ export default function SignupPage() {
     setLoading(false);
 
     if (error) {
-      toast.error(error.message);
+      setError(getAuthErrorMessage(error));
       return;
     }
 
@@ -117,6 +120,18 @@ export default function SignupPage() {
                 />
               </div>
             </div>
+
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-4 flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
+                role="alert"
+              >
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                <span>{error}</span>
+              </motion.div>
+            )}
 
             <button
               type="submit"
